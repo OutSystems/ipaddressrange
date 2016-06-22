@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NetTools</RootNamespace>
     <AssemblyName>IPAddressRange</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,8 +32,19 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\IPAddressRange.XML</DocumentationFile>
     <NoWarn>1591</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="OutSystems.HubEdition.RuntimePlatform">
+      <HintPath>..\..\..\..\..\..\eSpace\Build\Debug\OutSystems.HubEdition.RuntimePlatform.dll</HintPath>
+    </Reference>
+    <Reference Include="OutSystems.RuntimeCommon, Version=9.1.500.109, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\eSpace\Build\Debug\OutSystems.RuntimeCommon.dll</HintPath>
+    </Reference>
+    <Reference Include="ServerTests">
+      <HintPath>..\..\..\..\..\..\eSpace\Build\Debug\ServerTests.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />

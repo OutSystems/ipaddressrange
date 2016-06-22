@@ -8,11 +8,12 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>IPRange.Test</RootNamespace>
     <AssemblyName>IPRange.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TestProjectType>UnitTest</TestProjectType>
     <RestorePackages>true</RestorePackages>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,6 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,8 +32,30 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\eSpace\Build\Debug\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="NUnitOSAddIn.Framework">
+      <HintPath>..\..\..\..\..\..\eSpace\Build\Debug\NUnitOSAddIn.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="OutSystems.HubEdition.RuntimePlatform, Version=9.1.500.109, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\eSpace\Build\Debug\OutSystems.HubEdition.RuntimePlatform.dll</HintPath>
+    </Reference>
+    <Reference Include="OutSystems.RuntimeCommon, Version=9.1.500.109, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\eSpace\Build\Debug\OutSystems.RuntimeCommon.dll</HintPath>
+    </Reference>
+    <Reference Include="OutSystems.TestsCommon">
+      <HintPath>..\..\..\..\..\..\eSpace\Build\Debug\OutSystems.TestsCommon.dll</HintPath>
+    </Reference>
+    <Reference Include="ServerTests">
+      <HintPath>..\..\..\..\..\..\eSpace\Build\Debug\ServerTests.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -56,7 +80,6 @@
     <Compile Include="IPAddressRangeTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BitsTest.cs" />
-    <Compile Include="IPAddressRangeParseTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
