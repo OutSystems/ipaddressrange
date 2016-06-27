@@ -47,6 +47,8 @@ namespace NetTools
             while (i < A.Length && A[i] == B[i]) {
                 i++;
             }
+            //<st replaceBy="return i == A.length || Byte.toUnsignedInt(B[i]) >= Byte.toUnsignedInt(A[i]);
+            //"/>
             return i == A.Length || B[i] >= A[i];
         }
 
@@ -58,6 +60,8 @@ namespace NetTools
             while (i < A.Length && A[i] == B[i]) {
                 i++;
             }
+            //<st replaceBy="return i == A.length || !(Byte.toUnsignedInt(B[i]) > Byte.toUnsignedInt(A[i]));
+            //"/>
             return i == A.Length || B[i] <= A[i];
         }
 
@@ -83,40 +87,29 @@ namespace NetTools
             var idx = 0;
 
             // find beginning 0xFF
-            for (; idx < bytes.Length && bytes[idx] == 0xff; idx++) ;
+            while (idx < bytes.Length && bytes[idx] == (byte)0xFF) {
+                idx++;
+            }
+
             bitLength = 8 * idx;
 
             if (idx < bytes.Length) {
                 switch (bytes[idx]) {
-                    //<st replaceBy = "case (byte)0xFE: bitLength += 7; break;
-                    //"/>
-                    case 0xFE: bitLength += 7; break;
-                    //<st replaceBy = "case (byte)0xFC: bitLength += 6; break;
-                    //"/>
-                    case 0xFC: bitLength += 6; break;
-                    //<st replaceBy = "case (byte)0xF8: bitLength += 5; break;
-                    //"/>
-                    case 0xF8: bitLength += 5; break;
-                    //<st replaceBy = "case (byte)0xF0: bitLength += 4; break;
-                    //"/>
-                    case 0xF0: bitLength += 4; break;
-                    //<st replaceBy = "case (byte)0xE0: bitLength += 3; break;
-                    //"/>
-                    case 0xE0: bitLength += 3; break;
-                    //<st replaceBy = "case (byte)0xC0: bitLength += 2; break;
-                    //"/>
-                    case 0xC0: bitLength += 2; break;
-                    //<st replaceBy = "case (byte)0x80: bitLength += 1; break;
-                    //"/>
-                    case 0x80: bitLength += 1; break;
-                    //<st replaceBy = "case (byte)0x00: break;
-                    //"/>
-                    case 0x00: break;
+                    case (byte)0xFE: bitLength += 7; break;
+                    case (byte)0xFC: bitLength += 6; break;
+                    case (byte)0xF8: bitLength += 5; break;
+                    case (byte)0xF0: bitLength += 4; break;
+                    case (byte)0xE0: bitLength += 3; break;
+                    case (byte)0xC0: bitLength += 2; break;
+                    case (byte)0x80: bitLength += 1; break;
+                    case (byte)0x00: break;
                     default: // invalid bitmask
                         return null;
                 }
                 // remainder must be 0x00
-                if (bytes.Skip(idx + 1).Any(x => x != 0x00)) return null;
+                if (bytes.Skip(idx + 1).Any(x => x != (byte)0x00)) {
+                    return null;
+                }
             }
             return bitLength;
         }
@@ -128,7 +121,7 @@ namespace NetTools
         }
 
         private static void IncrementAtIndex(byte[] array, int index) {
-            //<st replaceBy="byte MAX_VALUE = Byte.MAX_VALUE;
+            //<st replaceBy="byte MAX_VALUE = -0x01;
             //"/>
             byte MAX_VALUE = byte.MaxValue;
             if (array[index] == MAX_VALUE) {

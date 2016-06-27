@@ -91,24 +91,26 @@ namespace NetTools
         }
 
         public static IPAddressRange Parse(string ipRangeString) {
-            if (ipRangeString == null) throw new ArgumentNullException("IPAddressRange to parse if null");
 
+            if (ipRangeString == null) {
+                throw new ArgumentNullException("IPAddressRange to parse if null");
+            }
             // remove all spaces.
             ipRangeString = ipRangeString.Replace(" ", String.Empty);
 
-            //<st replaceBy="int adrKey = 0;
+            //<st replaceBy="int adrKey = 1;
             //"/>
             string adrKey = "adr";
-            //<st replaceBy="int maskLenKey = 1;
+            //<st replaceBy="int maskLenKey = 2;
             //"/>
             string maskLenKey = "maskLen";
-            //<st replaceBy="int bitmaskKey = 0;
+            //<st replaceBy="int bitmaskKey = 2;
             //"/>
             string bitmaskKey = "bitmask";
-            //<st replaceBy="int beginKey = 0;
+            //<st replaceBy="int beginKey = 1;
             //"/>
             string beginKey = "begin";
-            //<st replaceBy="int endKey = 1;
+            //<st replaceBy="int endKey = 2;
             //"/>
             string endKey = "end";
             // Pattern 1. CIDR range: "192.168.0.0/24", "fe80::/10"
@@ -185,7 +187,7 @@ namespace NetTools
         /// </summary>
         /// <returns></returns>
         public override string ToString() {
-            return Equals(Begin, End) ? Begin.ToString() : string.Format("{0}-{1}", Begin, End);
+            return Equals(Begin, End) ? Begin.ToString() : string.Format("{0}-{1}", Begin.ToString(), End.ToString());
         }
 
         public int GetPrefixLength() {
@@ -214,7 +216,7 @@ namespace NetTools
         /// Returns a Cidr String if this matches exactly a Cidr subnet
         /// </summary>
         public string ToCidrString() {
-            return string.Format("{0}/{1}", Begin, GetPrefixLength());
+            return string.Format("{0}/{1}", Begin.ToString(), GetPrefixLength());
         }
     }
 }

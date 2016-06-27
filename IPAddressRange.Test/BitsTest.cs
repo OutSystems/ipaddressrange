@@ -101,19 +101,19 @@ namespace OutSystems.ServerTests.RuntimePlatform.LoginBruteForce {
         [Test(Description = "Tests if the number of bits returned for a given bit mask")]
         [TestDetails(TestIssue = "#LBP-41 #LBP-51", CreatedBy = "hgg", Feature = Features.LoginBruteForceProtection)]
         public void GetBitMaskLengthTest() {
-            Assert.AreEqual(1, Bits.GetBitMaskLength(new byte[] { 128, 0, 0, 0 }));
-            Assert.AreEqual(8, Bits.GetBitMaskLength(new byte[] { 255, 0, 0, 0 }));
-            Assert.AreEqual(16, Bits.GetBitMaskLength(new byte[] { 255, 255, 0, 0 }));
-            Assert.AreEqual(24, Bits.GetBitMaskLength(new byte[] { 255, 255, 255, 0 }));
-            Assert.AreEqual(23, Bits.GetBitMaskLength(new byte[] { 255, 255, 254, 0 }));
-            Assert.AreEqual(22, Bits.GetBitMaskLength(new byte[] { 255, 255, 252, 0 }));
-            Assert.AreEqual(21, Bits.GetBitMaskLength(new byte[] { 255, 255, 248, 0 }));
-            Assert.AreEqual(20, Bits.GetBitMaskLength(new byte[] { 255, 255, 240, 0 }));
-            Assert.AreEqual(19, Bits.GetBitMaskLength(new byte[] { 255, 255, 224, 0 }));
-            Assert.AreEqual(18, Bits.GetBitMaskLength(new byte[] { 255, 255, 192, 0 }));
-            Assert.AreEqual(17, Bits.GetBitMaskLength(new byte[] { 255, 255, 128, 0 }));
-            Assert.AreEqual(31, Bits.GetBitMaskLength(new byte[] { 255, 255, 255, 254 }));
-            Assert.AreEqual(32, Bits.GetBitMaskLength(new byte[] { 255, 255, 255, 255 }));
+            Assert.IsTrue(1 == Bits.GetBitMaskLength(new byte[] { 128, 0, 0, 0 }));
+            Assert.IsTrue(8 == Bits.GetBitMaskLength(new byte[] { 255, 0, 0, 0 }));
+            Assert.IsTrue(16 == Bits.GetBitMaskLength(new byte[] { 255, 255, 0, 0 }));
+            Assert.IsTrue(24 == Bits.GetBitMaskLength(new byte[] { 255, 255, 255, 0 }));
+            Assert.IsTrue(23 == Bits.GetBitMaskLength(new byte[] { 255, 255, 254, 0 }));
+            Assert.IsTrue(22 == Bits.GetBitMaskLength(new byte[] { 255, 255, 252, 0 }));
+            Assert.IsTrue(21 == Bits.GetBitMaskLength(new byte[] { 255, 255, 248, 0 }));
+            Assert.IsTrue(20 == Bits.GetBitMaskLength(new byte[] { 255, 255, 240, 0 }));
+            Assert.IsTrue(19 == Bits.GetBitMaskLength(new byte[] { 255, 255, 224, 0 }));
+            Assert.IsTrue(18 == Bits.GetBitMaskLength(new byte[] { 255, 255, 192, 0 }));
+            Assert.IsTrue(17 == Bits.GetBitMaskLength(new byte[] { 255, 255, 128, 0 }));
+            Assert.IsTrue(31 == Bits.GetBitMaskLength(new byte[] { 255, 255, 255, 254 }));
+            Assert.IsTrue(32 == Bits.GetBitMaskLength(new byte[] { 255, 255, 255, 255 }));
 
             Assert.IsNull(Bits.GetBitMaskLength(new byte[] { 255, 1, 0, 0 }));
             Assert.IsNull(Bits.GetBitMaskLength(new byte[] { 255, 127, 0, 0 }));
@@ -133,5 +133,5 @@ namespace OutSystems.ServerTests.RuntimePlatform.LoginBruteForce {
             Assert.IsTrue(CryptManager.SlowEquals(new byte[] { 0x0b, 0x00, 0x00, 0x00 }, Bits.Increment(new byte[] { 0x0a, 0xff, 0xff, 0xff })));
             Assert.IsTrue(CryptManager.SlowEquals(new byte[] { 0xff, 0xff, 0xff, 0xff }, Bits.Increment(new byte[] { 0xff, 0xff, 0xff, 0xfe })));
         }
-    }
+    }       
 }

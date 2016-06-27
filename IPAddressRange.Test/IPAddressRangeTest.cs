@@ -77,7 +77,7 @@ namespace OutSystems.ServerTests.RuntimePlatform.LoginBruteForce {
         public void ParseTest_IPv6_Bitmask() {
             var range = IPAddressRange.Parse("fe80:de40:fbaa::/ffff:ffff:ffff::");
             Assert.IsTrue(RuntimePlatformUtils.IPAddressIsValidIPv6(range.Begin.ToString()));
-            Assert.AreEqual("fe80:de40:fbaa::", range.Begin.ToString());
+            Assert.IsTrue(range.Begin.ToString().Equals("fe80:de40:fbaa::") || range.Begin.ToString().Equals("fe80:de40:fbaa:0:0:0:0:0"));
             Assert.IsTrue(RuntimePlatformUtils.IPAddressIsValidIPv6(range.End.ToString()));
             Assert.AreEqual("fe80:de40:fbaa:ffff:ffff:ffff:ffff:ffff", range.End.ToString());
         }
@@ -159,7 +159,7 @@ namespace OutSystems.ServerTests.RuntimePlatform.LoginBruteForce {
         public void ParseTest_IPv6_CIDR() {
             var range = IPAddressRange.Parse("fe80::/10");
             Assert.IsTrue(RuntimePlatformUtils.IPAddressIsValidIPv6(range.Begin.ToString()));
-            Assert.AreEqual("fe80::", range.Begin.ToString());
+            Assert.IsTrue(range.Begin.ToString().Equals("fe80::") || range.Begin.ToString().Equals("fe80:0:0:0:0:0:0:0"));
             Assert.IsTrue(RuntimePlatformUtils.IPAddressIsValidIPv6(range.End.ToString()));
             Assert.AreEqual("febf:ffff:ffff:ffff:ffff:ffff:ffff:ffff", range.End.ToString());
         }
@@ -227,22 +227,25 @@ namespace OutSystems.ServerTests.RuntimePlatform.LoginBruteForce {
         [TestDetails(TestIssue = "#LBP-41 #LBP-51", CreatedBy = "hgg", Feature = Features.LoginBruteForceProtection)]
         public void Enumerate_IPv4() {
             var ips = IPAddressRange.Parse("192.168.60.253-192.168.61.2").AsEnumerable().ToArray();
-            Assert.AreEqual(ips, new IPAddress[]
-        {
-            IPAddress.Parse("192.168.60.253"),
-            IPAddress.Parse("192.168.60.254"),
-            IPAddress.Parse("192.168.60.255"),
-            IPAddress.Parse("192.168.61.0"),
-            IPAddress.Parse("192.168.61.1"),
-            IPAddress.Parse("192.168.61.2"),
-        });
+            var expected = new IPAddress[]
+                {
+                    IPAddress.Parse("192.168.60.253"),
+                    IPAddress.Parse("192.168.60.254"),
+                    IPAddress.Parse("192.168.60.255"),
+                    IPAddress.Parse("192.168.61.0"),
+                    IPAddress.Parse("192.168.61.1"),
+                    IPAddress.Parse("192.168.61.2"),
+                };
+            //<st replaceBy="Assert.assertArrayEquals(expected, ips);
+            //"/>
+            Assert.AreEqual(expected, ips);
         }
 
         [Test(Description = "Tests the enumerate of a range of IPv6 addresses and if it contains the expected number of addresses, as its first and last address")]
         [TestDetails(TestIssue = "", CreatedBy = "hgg", Feature = Features.LoginBruteForceProtection)]
         public void Enumerate_IPv6() {
             var ips = IPAddressRange.Parse("fe80::d503:4ee:3882:c586/120").AsEnumerable().ToArray();
-            Assert.AreEqual(256, ips.Length);
+            Assert.IsTrue(256 == ips.Length);
             Assert.AreEqual(IPAddress.Parse("fe80::d503:4ee:3882:c500"), ips.First());
             Assert.AreEqual(IPAddress.Parse("fe80::d503:4ee:3882:c5ff"), ips.Last());
         }
@@ -262,9 +265,14 @@ namespace OutSystems.ServerTests.RuntimePlatform.LoginBruteForce {
         public void ToString_Output() {
             var testCases = new string[][] {
                 new string[]{"192.168.60.2", "192.168.60.2"}, 
-                new string[]{"192.168.60.2/24", "192.168.60.0-192.168.60.255"}, 
+                new string[]{"192.168.60.2/24", "192.168.60.0-192.168.60.255"},
+#if JAVA
+                new string[]{"fe80::d503:4ee:3882:c586", "fe80:0:0:0:d503:4ee:3882:c586"}, 
+                new string[]{"fe80::d503:4ee:3882:c586/120", "fe80:0:0:0:d503:4ee:3882:c500-fe80:0:0:0:d503:4ee:3882:c5ff"}
+#else
                 new string[]{"fe80::d503:4ee:3882:c586", "fe80::d503:4ee:3882:c586"}, 
                 new string[]{"fe80::d503:4ee:3882:c586/120", "fe80::d503:4ee:3882:c500-fe80::d503:4ee:3882:c5ff"}
+#endif
             };
 
             foreach (string[] testCase in testCases) {
@@ -325,13 +333,19 @@ namespace OutSystems.ServerTests.RuntimePlatform.LoginBruteForce {
         [TestDetails(TestIssue = "#LBP-41 #LBP-51", CreatedBy = "hgg", Feature = Features.LoginBruteForceProtection)]
         public void ToCidrString_Output() {
             var testCases = new string[][] {
-                new string[]{"fe80::/10", "fe80::/10"},
                 new string[]{"192.168.0.0/24", "192.168.0.0/24"},
                 new string[]{"192.168.0.0", "192.168.0.0/32"},
                 new string[]{"192.168.0.0-192.168.0.0", "192.168.0.0/32"},
-                new string[]{"fe80::", "fe80::/128"},
                 new string[]{"192.168.0.0-192.168.0.255", "192.168.0.0/24"},
+#if JAVA
+                new string[]{"fe80::", "fe80:0:0:0:0:0:0:0/128"},
+                new string[]{"fe80::/10", "fe80:0:0:0:0:0:0:0/10"},
+                new string[]{"fe80::-fe80:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "fe80:0:0:0:0:0:0:0/16"}
+#else
+                new string[]{"fe80::", "fe80::/128"},
+                new string[]{"fe80::/10", "fe80::/10"},
                 new string[]{"fe80::-fe80:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "fe80::/16"}
+#endif
             };
 
             foreach (string[] testCase in testCases) {
@@ -369,8 +383,6 @@ namespace OutSystems.ServerTests.RuntimePlatform.LoginBruteForce {
             var testCases = new string[][] {
                 new string[]{"192.168.60.13", "192.168.60.13", "192.168.60.13"},
                 new string[]{"  192.168.60.13  ", "192.168.60.13", "192.168.60.13"},
-                new string[]{"fe80::d503:4ee:3882:c586", "fe80::d503:4ee:3882:c586", "fe80::d503:4ee:3882:c586"},
-                new string[]{"  fe80::d503:4ee:3882:c586  ", "fe80::d503:4ee:3882:c586", "fe80::d503:4ee:3882:c586"},
                 new string[]{"3232252004", "192.168.64.100", "192.168.64.100"},
                 new string[]{"  3232252004  ", "192.168.64.100", "192.168.64.100"},
                 new string[]{"219.165.64.0/19", "219.165.64.0", "219.165.95.255"},
@@ -381,16 +393,27 @@ namespace OutSystems.ServerTests.RuntimePlatform.LoginBruteForce {
                 new string[]{"  3232252004  /  24  ", "192.168.64.0", "192.168.64.255"},
                 new string[]{"192.168.60.26–192.168.60.37", "192.168.60.26", "192.168.60.37"},
                 new string[]{"  192.168.60.26  –  192.168.60.37  ", "192.168.60.26", "192.168.60.37"},
-                new string[]{"fe80::c586-fe80::c600", "fe80::c586", "fe80::c600"},
-                new string[]{"  fe80::c586  -  fe80::c600  ", "fe80::c586", "fe80::c600"},
                 new string[]{"3232252004-3232252504", "192.168.64.100", "192.168.66.88"},
                 new string[]{"  3232252004  -  3232252504  ", "192.168.64.100", "192.168.66.88"},
                 new string[]{"192.168.61.26–192.168.61.37", "192.168.61.26", "192.168.61.37"},
                 new string[]{"  192.168.61.26  –  192.168.61.37  ", "192.168.61.26", "192.168.61.37"},
-                new string[]{"fe80::c586–fe80::c600", "fe80::c586", "fe80::c600"},
-                new string[]{"  fe80::c586  –  fe80::c600  ", "fe80::c586", "fe80::c600"},
                 new string[]{"3232252004–3232252504", "192.168.64.100", "192.168.66.88"},
-                new string[]{"  3232252004  –  3232252504  ", "192.168.64.100", "192.168.66.88"}
+                new string[]{"  3232252004  –  3232252504  ", "192.168.64.100", "192.168.66.88"},
+#if JAVA
+                new string[]{"  fe80::c586  –  fe80::c600  ", "fe80:0:0:0:0:0:0:c586", "fe80:0:0:0:0:0:0:c600"},
+                new string[]{"fe80::d503:4ee:3882:c586", "fe80:0:0:0:d503:4ee:3882:c586", "fe80:0:0:0:d503:4ee:3882:c586"},
+                new string[]{"  fe80::d503:4ee:3882:c586  ", "fe80:0:0:0:d503:4ee:3882:c586", "fe80:0:0:0:d503:4ee:3882:c586"},
+                new string[]{"fe80::c586-fe80::c600", "fe80:0:0:0:0:0:0:c586", "fe80:0:0:0:0:0:0:c600"},
+                new string[]{"  fe80::c586  -  fe80::c600  ", "fe80:0:0:0:0:0:0:c586", "fe80:0:0:0:0:0:0:c600"},
+                new string[]{"fe80::c586–fe80::c600", "fe80:0:0:0:0:0:0:c586", "fe80:0:0:0:0:0:0:c600"}
+#else
+                new string[]{"  fe80::c586  –  fe80::c600  ", "fe80::c586", "fe80::c600"},
+                new string[]{"fe80::d503:4ee:3882:c586", "fe80::d503:4ee:3882:c586", "fe80::d503:4ee:3882:c586"},
+                new string[]{"  fe80::d503:4ee:3882:c586  ", "fe80::d503:4ee:3882:c586", "fe80::d503:4ee:3882:c586"},
+                new string[]{"fe80::c586-fe80::c600", "fe80::c586", "fe80::c600"},
+                new string[]{"  fe80::c586  -  fe80::c600  ", "fe80::c586", "fe80::c600"},
+                new string[]{"fe80::c586–fe80::c600", "fe80::c586", "fe80::c600"}
+#endif
             };
 
             foreach (string[] testCase in testCases) {
@@ -409,11 +432,16 @@ namespace OutSystems.ServerTests.RuntimePlatform.LoginBruteForce {
         public void ParseFails() {
             var testCases = new string[][] {
                 new string[]{null, typeof(ArgumentNullException).ToString()},
+                //<st replaceBy='new String[] { "", NumberFormatException.class.toString() } '/>
                 new string[]{"", typeof(FormatException).ToString()},
+                //<st replaceBy='new String[] { " ", NumberFormatException.class.toString() } '/>
                 new string[]{" ", typeof(FormatException).ToString()},
+                //<st replaceBy='new String[] { "gvvdv", NumberFormatException.class.toString() } '/>
                 new string[]{"gvvdv", typeof(FormatException).ToString()},
+                //<st replaceBy='new String[] { "192.168.0.10/48", NumberFormatException.class.toString() } '/>
                 new string[]{"192.168.0.10/48", typeof(FormatException).ToString()},
                 new string[]{"192.168.0.10-192.168.0.5", typeof(ArgumentException).ToString()},
+                //<st replaceBy='new String[] { "10.256.1.1", UnknownHostException.class.toString() } '/>
                 new string[]{"10.256.1.1", typeof(FormatException).ToString()}
             };
 
